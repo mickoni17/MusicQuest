@@ -22,7 +22,18 @@ class Users extends CI_Model {
         $result=$this->db->where('Username',$username)->get('user');
         $user=$result->row();
         if ($user!=NULL) {
-            $this->user=$user;
+            $this->user==null; $this->user= $user;
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+    
+    public function dohvatiUseraSaID($iduser){
+        $result=$this->db->where('IDUser',$iduser)->get('user');
+        $user=$result->row();
+        if ($user!=NULL) {
+            $this->user==null; $this->user= $user;
             return TRUE;
         } else {
             return FALSE;
@@ -62,4 +73,54 @@ class Users extends CI_Model {
             $this->db->query("INSERT INTO `locationpictures`(`IDUserOrg`) VALUES (".$maks.")");
         }
     }
+    
+    public function checkConfirmed($confPass) {
+        if ($user->Password == $confPass) {
+            return TRUE;
+        }
+        else {
+            return FALSE;
+        }
+    }
+    
+    public function getOne($username) {
+        $query = $this->db->from("user")->where("Username", $username)->get();
+        return $query->row();
+    }
+    
+    public function updateUserDescription($username, $newDesc) {
+        $this->db->set("Description", $newDesc);
+        $this->db->where("Username",$username);
+        $this->db->update("user");
+    }
+    
+    public function getUserDescription($username) {
+        $result=$this->db->where("Username",$username)->from("user")->select("Description")->get();
+        return $result->row();
+    }
+    
+    public function savePicPath($username, $file) {
+        $this->db->set("ProfilePicture",$file)->where("Username",$username)->update("user");
+        $this->dohvatiUsera($username);
+    }
+    
+    public function getUserProfilePicture($username) {
+        $this->db->where("Username",$username)->from("user")->select("ProfilePicture")->get();
+        return $result->row();
+    }
+    
+    public function updatePass($iduser, $newPass) {
+        $this->db->set("Password", $newPass)->where("IDUser", $iduser)->update('user');
+    }
+
+    public function getAllUsers($tip, $howMany=null) {
+        $result=$this->db->where("TipUser", $tip)->get('user',$howMany);
+        return $result;
+    }
+    
+    public function searchDB($name) {
+        $result = $this->db->like("Name", $name)->get('user');
+        return $result;
+    }
+    
 }

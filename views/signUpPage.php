@@ -13,7 +13,7 @@
                         <input type="password" class="form-control" placeholder="Password" name="Password" value="" required/>
                     </div>
                      <div class="form-group">
-                        <input type="password" class="form-control" placeholder="Confirm Password" value="" required/>
+                        <input type="password" class="form-control" placeholder="Confirm Password" name="Confirmed" value="" required/>
                     </div>
                     <div class="form-check-inline">
                                               <label class="form-check-label">
@@ -29,6 +29,7 @@
                                             <div class="form-group">
                         <input class="btn btn-primary btn-lg" type="submit" value="Register">
                     </div>
+                    <?php echo "<p style=\"font-color:red;\">".$message."</p>"?>
                 </form>
             </div>
         </div>

@@ -9,6 +9,7 @@
                         <div class="form-group">
                             <input type="password" class="form-control" placeholder="Password" name="password" value=""  required/>
                         </div>
+                        <?php echo "<br><p style=\"font-color:red;\">".$message."</p>" ?>
                         <div class="form-group">
                             <input class="btn btn-primary btn-lg" type="submit" value="Login">
                         </div>

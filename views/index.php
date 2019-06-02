@@ -60,148 +60,23 @@
 <!-- Slider -->
         <table align="center">
             <tr>
-                <td align="right" class="searchTDs">Musicians</td>
                 <td>
-                    <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider"></span>
-                    </label>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-info active">
+                            <input type="radio" name="options" id="option1" autocomplete="off" onChange="whichChecked(0)"> Musicians
+                        </label>
+                        <label class="btn btn-info">
+                            <input type="radio" name="options" id="option2" autocomplete="off" onChange="whichChecked(1)"> Locations
+                        </label>
+                    </div>
                 </td>
-                <td align="left" class="searchTDs"> Locations </td>
             </tr>
         </table>
 
 <!-- Slike -->
         <div class="container testimonial-group">
-            <div class="row text-center">
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Ariana Grande</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Yan Dusk</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Technicolor Lies</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Beatles</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Drake</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Sky Wikluh</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Rolling Stones</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Eminem</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">E-Play</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Repetitor</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Octavian</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Kanye West</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Kukus Klan</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Lavan</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Milkovic</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-4 col-sm-6">
-                    <div class="card">
-                        <a href="musicianPage.html"><img src="" class="card-img-top" alt="Image Not Found"></a>
-                        <div class="card-body">
-                            <h5 class="card-title text-center">Nezni Dalibor</h5>
-                        </div>
-                    </div>
-                </div>
+            <div id="rowToFill" class="row text-center">
+                
             </div>
         </div>
     </div>
