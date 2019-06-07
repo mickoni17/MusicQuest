@@ -13,6 +13,60 @@
  */
 class User extends CI_Controller {
     private $users;
+    private $acceptArray = array("<a href=\"#collapseInfo1\" data-toggle=\"collapse\" class=\"list-group-item list-group-item-action\">
+        <div class=\"d-flex w-100 justify-content-between\">
+            <h6><label id=\"label","\">", "</label> and you have a cooperation on ", "</h6>
+        </div>
+    </a>
+    <div class=\"collapse\" id=\"collapseInfo1\">
+        <div class=\"card card-body\" id=\"textPart","\">", "<div class=\"accrej\">
+                <br><button type=\"button\" class=\"btn btn-success btn-sm\" onClick=\"acceptRequest(",")\">Accept</button>
+                <button type=\"button\" class=\"btn btn-success btn-sm\" onClick=\"rejectRequest(",")\">Reject</button>
+                </div>
+            </div>
+      </div>");
+    private $acceptedArray = array("<a href=\"#collapseInfo1\" data-toggle=\"collapse\" class=\"list-group-item list-group-item-action\">
+        <div class=\"d-flex w-100 justify-content-between\">
+            <h6><label id=\"label","\">", "</label> and you have a cooperation on", "</h6>
+        </div>
+    </a>");
+    private $rejectedArray = array("<a href=\"#collapseInfo2\" data-toggle=\"collapse\" class=\"list-group-item list-group-item-action\">
+            <div class=\"d-flex w-100 justify-content-between\">
+        <h6>", " has denied your cooperation request.</h6>
+            </div>
+      </a>
+      <div class=\"collapse\" id=\"collapseInfo2\">
+              <div class=\"card card-body\">",
+               "</div>
+      </div>");
+    private $endedArray = array("<a href=\"#collapseInfo3\" data-toggle=\"collapse\" class=\"list-group-item list-group-item-action\">
+            <div class=\"d-flex w-100 justify-content-between\">
+        <h6>You cooperation with", "has ended. Rate it!</h6>
+            </div>
+      </a>
+      <div class=\"collapse\" id=\"collapseInfo3\">
+              <div class=\"card card-body\">
+                <!-- <form class=\"formRating\"> -->
+                        Rate your cooperation:
+                            <div class=\"rating\">
+                            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+                            </div><br>
+                            <button class=\"btn btn-primary btn-sm\" type=\"submit\" data-toggle=\"modal\" data-target=\"#exampleModal\">Submit</button>
+                    <!-- </form> -->
+                    <div class=\"modal fade\" id=\"exampleModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\">
+                              <div class=\"modal-dialog\" role=\"document\">
+                                <div class=\"modal-content\">
+                                  <div class=\"modal-header\">
+                                    <h5 class=\"modal-title\" id=\"exampleModalLabel\">Cooperation concluded!</h5>
+                                  </div>
+                                  <div class=\"modal-body\">
+                                    <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Close</button>
+                                  </div>
+                                </div>
+                              </div>
+                    </div>
+              </div>
+      </div>");
     
     public function __construct() {
         parent::__construct();
@@ -23,19 +77,150 @@ class User extends CI_Controller {
         $this->load->model("Users");
     }
     
+    public function remapToMusician($param) {
+        $user = $this->Users->getOne($param);
+        $result = $this->DemoVideos->getUserYoutubeLink($user->IDUser);
+        $message=null;
+        $page=null;
+        if ($user->Username == $_SESSION['user']->Username) {
+            $page = "musicianProfile.php";
+        }
+        else {
+            $page = "otherMusicianPage.php";
+        }
+        $this->load->view("templates/headerGost.php", ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"User", "user"=>$user, "resources"=>$result]);
+        $this->load->view($page, ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"User", "user"=>$user, "resources"=>$result]);
+        $this->load->view("templates/footer.php");
+    }
+    
+    public function remapToOrganizer($param) {
+        $user = $this->Users->getOne($param);
+        $result = $this->LocationPictures->getUserPictures($user->IDUser);
+        $message=null;
+        $page=null;
+        if ($user->Username == $_SESSION['user']->Username) {
+            $page = "organizerProfile.php";
+        }
+        else {
+            $page = "otherOrganizerPage.php";
+        }
+        $this->load->view("templates/headerGost.php", ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"User", "user"=>$user, "resources"=>$result]);
+        $this->load->view($page, ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"User", "user"=>$user, "resources"=>$result]);
+        $this->load->view("templates/footer.php");
+    }
+    
+    public function requestCooperation($param) {
+        $user = $this->Users->getOne($param);
+        $this->printPage("requestCooperation.php", "cooperationStylesheet.css", $user);
+    }
+    
+    public function sendCoopRequest() {
+        $datetime = $this->input->post("Date");
+        $text = $this->input->post("Description");
+        $username = $this->input->post("userWhich");
+        $user = $this->Users->getOne($username);
+        $date="";
+        for ($i=0; $i<strlen($datetime); $i++) {
+            if ($datetime[$i] != 'T') {
+                $date.=$datetime[$i];
+            }
+            else {
+                $date.=" ";
+            }
+        }
+        $date.=":00";
+        if ($user->TipUser==0) {
+            $userFirst=$user;
+            $userSecond=$_SESSION['user'];
+        }
+        else {
+            $userFirst=$_SESSION['user'];
+            $userSecond=$user;
+        }
+        $this->Cooperation->addCooperation($userFirst, $userSecond, $date, $text, $_SESSION['user']->IDUser);
+        if ($user->TipUser==0) {
+            $this->remapToMusician($username);
+        }
+        else {
+            $this->remapToOrganizer($username);
+        }
+    }
+    
+    public function openNotificationsPage() {
+        $user = $this->Users->getOne($_SESSION['user']->Username);
+        $coops = $this->Cooperation->getAll($user->IDUser);
+        $resources=array();
+        $k=0;   
+        foreach ($coops->result() as $a) {
+            $fillString="";
+            if ($a->Status == "PENDING" && $a->IDReply != $user->IDUser) {
+                $fillString = $this->acceptArray[0];
+                if ($a->IDUserOrg==$user->IDUser) {
+                    $otherUser = $this->Users->dohvatiCelogUseraSaId($a->IDUserMus);
+                }
+                else {
+                    $otherUser = $this->Users->dohvatiCelogUseraSaId($a->IDUserOrg);
+                }
+                $fillString.=$k.$this->acceptArray[1].$otherUser->Name.$this->acceptArray[2].$a->Date.$this->acceptArray[3].$k.$this->acceptArray[4].$a->proposalDescription.$this->acceptArray[5].$k.$this->acceptArray[6].$k.$this->acceptArray[7];
+                $resources[$k++]=$fillString;
+            }
+            else if ($a->Status == "ACCEPTED") {
+                $fillString = $this->acceptArray[0];
+                if ($a->IDUserOrg==$user->IDUser) {
+                    $otherUser = $this->Users->dohvatiCelogUseraSaId($a->IDUserMus);
+                }
+                else {
+                    $otherUser = $this->Users->dohvatiCelogUseraSaId($a->IDUserOrg);
+                }
+                $this->Cooperation->getOne($a->IDUserMus, $a->IDUserOrg, $a->Status, $a->IDReply);
+                $fillString.=$k.$this->acceptArray[1].$otherUser->Name.$this->acceptArray[2].$a->Date.$this->acceptArray[3];
+                $resources[$k++]=$fillString;
+            }
+            else if ($a->Status == "REJECTED" && $a->IDReply != $user->IDUser) {
+                $fillString = $this->rejectedArray[0];
+                if ($a->IDUserOrg==$user->IDUser) {
+                    $otherUser = $this->Users->dohvatiCelogUseraSaId($a->IDUserMus);
+                }
+                else {
+                    $otherUser = $this->Users->dohvatiCelogUseraSaId($a->IDUserOrg);
+                }
+                $fillString.=$otherUser->Name.$this->rejectedArray[1].$a->Description.$this->rejectedArray[2];
+                $resources[$k++]=$fillString;
+            }
+        }
+        $this->load->view("templates/headerGost.php", ["currentPage"=>"cooperationStylesheet.css", "message"=>null, "controller"=>"User", "user"=>$user, "resources"=>$resources]);
+        $this->load->view("notificationsPage.php");
+        $this->load->view("templates/footer.php");
+    }
+    
+    public function acceptR() {
+        $desc = $_GET["desc"];
+        $other = $_GET["other"];
+        $this->Cooperation->acceptRequest($desc, $other);
+    }
+    
     public function searchUsers() {
         $name = $_GET['search'];
         $result = $this->Users->searchDB($name);
         $stringToReturn="";
+        $type;
+        $i=0;
         foreach ($result->result() as $row) {
+            if ($row->TipUser==0) {
+                $type="Musician";
+            }
+            else {
+                $type="Organizer";
+            }
             $stringToReturn.= "<div class=\"col-lg-3 col-md-4 col-sm-6\">
                 <div class=\"card\">
-                    <a href=\"musicianPage.html\"><img src=".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
-                    <div class=\"card-body\">
+                    <a href=\"".base_url()."index.php/User/remapTo".$type."/".$row->Username."\"><img src=../../".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
+                    <div class=\"card-body\" id=".$i.">
                         <h5 class=\"card-title text-center\">".$row->Name."</h5>
                     </div>
                 </div>
             </div>";
+            $i++;
         }
         echo $stringToReturn;
     }
@@ -44,15 +229,24 @@ class User extends CI_Controller {
         $this->whichOnes=$_GET['which'];
         $stringToReturn="";
         $result = $this->Users->getAllUsers($this->whichOnes,16);
+        $type;
+        $i=0;
         foreach ($result->result() as $row) {
+            if ($row->TipUser==0) {
+                $type="Musician";
+            }
+            else {
+                $type="Organizer";
+            }
             $stringToReturn.= "<div class=\"col-lg-3 col-md-4 col-sm-6\">
                 <div class=\"card\">
-                    <a href=\"musicianPage.html\"><img src=".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
-                    <div class=\"card-body\">
+                    <a href=\"".base_url()."index.php/User/remapTo".$type."/".$row->Username."\"><img src=../../".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
+                    <div class=\"card-body\" id=".$i.">
                         <h5 class=\"card-title text-center\">".$row->Name."</h5>
                     </div>
                 </div>
             </div>";
+            $i++;
         }
         echo $stringToReturn;
     }

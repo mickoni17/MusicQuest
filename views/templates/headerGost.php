@@ -139,6 +139,63 @@
                 }
                 xmlhttp.send();
             }
+            function acceptRequest(whichReq) {
+                var base = "<?php echo base_url()?>index.php"; 
+                var reply = prompt("Write a short description you would like to be shown for this event:");
+                if (window.XMLHttpRequest) {
+                        xmlhttp=new XMLHttpRequest();
+                    }
+                else {
+                    xmlhttp=new ActiveXObject("Microsoft.HMLHTTP");
+                }
+                xmlhttp.open("GET", base+"/<?php echo $controller?>/acceptR?desc="+reply+"&other="+document.getElementById("label"+whichReq).innerHTML,true);
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200){ // OK status
+                        document.getElementById("textPart"+whichReq).innerHTML = "You have accepted this cooperation!";
+                    }
+                }
+                xmlhttp.send();
+            }
+            function rejectRequest(whichReq) {
+                var base = "<?php echo base_url()?>index.php"; 
+                var reply = prompt("Write a reason why you don't want to do this:");
+                if (window.XMLHttpRequest) {
+                        xmlhttp=new XMLHttpRequest();
+                    }
+                else {
+                    xmlhttp=new ActiveXObject("Microsoft.HMLHTTP");
+                }
+                xmlhttp.open("GET", base+"/<?php echo $controller?>/rejectR?desc="+reply+"&other="+document.getElementById("label"+whichReq).innerHTML,true);
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200){ // OK status
+                        document.getElementById("textPart"+whichReq).innerHTML = "You have rejected this offer!";
+                    }
+                }
+                xmlhttp.send();
+            }
+            function rateOther(whichReq) {
+                var base = "<?php echo base_url()?>index.php";
+                var rating = document.getElementById("text"+whichReq).value;
+                alert(rating);
+                if (parseInt(rating,10)>5) {
+                    alert("Grade cant be higher than 5!");
+                    return;
+                }
+                var whoIsRated = document.getElementById("username"+whichReq).innerHTML;
+                if (window.XMLHttpRequest) {
+                        xmlhttp=new XMLHttpRequest();
+                    }
+                else {
+                    xmlhttp=new ActiveXObject("Microsoft.HMLHTTP");
+                }
+                xmlhttp.open("GET", base+"/<?php echo $controller?>/rateUser?rating="+rating+"&who="+whoIsRated,true);
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState==4 && xmlhttp.status==200){ // OK status
+                        document.getElementById("divToFill"+whichReq).innerHTML = "Great! Now continue using our site for more successful partnerships!";
+                    }
+                }
+                xmlhttp.send();
+            }
         </script>
     </head>
     <body style="background-image:url(<?php echo base_url()."images/Background2.png"?>)" onLoad="whichChecked(0)">
@@ -166,7 +223,7 @@
                         <div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"navbarDropdown\">
                             <a class=\"dropdown-item\" href=".site_url("$controller/profile").">View Profile</a>
                             <a class=\"dropdown-item\" href=".site_url("$controller/changePasswordOpenPage").">Change Password</a>
-                            <a class=\"dropdown-item\" href=\"notifications.html\">Coop Requests <span class=\"badge badge-danger\">3</span>
+                            <a class=\"dropdown-item\" href=".site_url("$controller/openNotificationsPage").">Coop Requests <span class=\"badge badge-danger\">3</span>
                             <a class=\"dropdown-item\" href=".site_url("User/logOut").">Log Out</a>
                         </div>
                 </li>"; }

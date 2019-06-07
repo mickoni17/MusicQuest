@@ -22,19 +22,127 @@ class Moderator extends CI_Controller {
         $this->load->model("Users");
     }
     
+    public function remapToMusician($param) {
+        $user = $this->Users->getOne($param);
+        $result = $this->DemoVideos->getUserYoutubeLink($user->IDUser);
+        $message=null;
+        $page=null;
+        if ($user->Username == $_SESSION['user']->Username) {
+            $page = "musicianProfile.php";
+        }
+        else {
+            $page = "otherMusicianPage.php";
+        }
+        $this->load->view("templates/headerGost.php", ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Moderator", "user"=>$user, "resources"=>$result]);
+        $this->load->view($page, ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Moderator", "user"=>$user, "resources"=>$result]);
+        $this->load->view("templates/footer.php");
+    }
+    
+    public function remapToOrganizer($param) {
+        $user = $this->Users->getOne($param);
+        $result = $this->LocationPictures->getUserPictures($user->IDUser);
+        $message=null;
+        $page=null;
+        if ($user->Username == $_SESSION['user']->Username) {
+            $page = "organizerProfile.php";
+        }
+        else {
+            $page = "otherOrganizerPage.php";
+        }
+        $this->load->view("templates/headerGost.php", ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Moderator", "user"=>$user, "resources"=>$result]);
+        $this->load->view($page, ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Moderator", "user"=>$user, "resources"=>$result]);
+        $this->load->view("templates/footer.php");
+    }
+    
+    public function requestCooperation($param) {
+        $user = $this->Users->getOne($param);
+        $this->printPage("requestCooperation.php", "cooperationStylesheet.css", $user);
+    }
+    
+    public function sendCoopRequest() {
+        $datetime = $this->input->post("Date");
+        $text = $this->input->post("Description");
+        $username = $this->input->post("userWhich");
+        $user = $this->Users->getOne($username);
+        $date="";
+        for ($i=0; $i<strlen($datetime); $i++) {
+            if ($datetime[$i] != 'T') {
+                $date.=$datetime[$i];
+            }
+            else {
+                $date.=" ";
+            }
+        }
+        $date.=":00";
+        if ($user->TipUser==0) {
+            $userFirst=$user;
+            $userSecond=$_SESSION['user'];
+        }
+        else {
+            $userFirst=$_SESSION['user'];
+            $userSecond=$user;
+        }
+        $this->Cooperation->addCooperation($userFirst, $userSecond, $date, $text);
+        if ($user->TipUser==0) {
+            $this->remapToMusician($username);
+        }
+        else {
+            $this->remapToOrganizer($username);
+        }
+    }
+    
+    public function promoteToModerator($param) {
+        $this->Users->promoteUserToMod($param);
+        if ($this->Users->getOne($param)->TipUser==0) {
+            $this->remapToMusician($param);
+        }
+        else {
+            $this->remapToOrganizer($param);
+        }
+    }
+    
+    public function demoteToUser($param) {
+        $this->Users->demoteUserFromMod($param);
+        if ($this->Users->getOne($param)->TipUser==0) {
+            $this->remapToMusician($param);
+        }
+        else {
+            $this->remapToOrganizer($param);
+        }
+    }
+    
+    public function deleteAccount($param) {
+        $this->Users->deleteUserAccount($param);
+        if ($this->Users->getOne($param)->TipUser==0) {
+            $this->remapToMusician($param);
+        }
+        else {
+            $this->remapToOrganizer($param);
+        }
+    }
+    
     public function searchUsers() {
         $name = $_GET['search'];
         $result = $this->Users->searchDB($name);
         $stringToReturn="";
+        $type;
+        $i=0;
         foreach ($result->result() as $row) {
+            if ($row->TipUser==0) {
+                $type="Musician";
+            }
+            else {
+                $type="Organizer";
+            }
             $stringToReturn.= "<div class=\"col-lg-3 col-md-4 col-sm-6\">
                 <div class=\"card\">
-                    <a href=\"musicianPage.html\"><img src=".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
-                    <div class=\"card-body\">
+                    <a href=\"".base_url()."index.php/Moderator/remapTo".$type."/".$row->Username."\"><img src=../../".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
+                    <div class=\"card-body\" id=".$i.">
                         <h5 class=\"card-title text-center\">".$row->Name."</h5>
                     </div>
                 </div>
             </div>";
+            $i++;
         }
         echo $stringToReturn;
     }
@@ -43,15 +151,24 @@ class Moderator extends CI_Controller {
         $this->whichOnes=$_GET['which'];
         $stringToReturn="";
         $result = $this->Users->getAllUsers($this->whichOnes,16);
+        $type;
+        $i=0;
         foreach ($result->result() as $row) {
+            if ($row->TipUser==0) {
+                $type="Musician";
+            }
+            else {
+                $type="Organizer";
+            }
             $stringToReturn.= "<div class=\"col-lg-3 col-md-4 col-sm-6\">
                 <div class=\"card\">
-                    <a href=\"musicianPage.html\"><img src=".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
-                    <div class=\"card-body\">
+                    <a href=\"".base_url()."index.php/Moderator/remapTo".$type."/".$row->Username."\"><img src=../../".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
+                    <div class=\"card-body\" id=".$i.">
                         <h5 class=\"card-title text-center\">".$row->Name."</h5>
                     </div>
                 </div>
             </div>";
+            $i++;
         }
         echo $stringToReturn;
     }

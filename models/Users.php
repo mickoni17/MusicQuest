@@ -40,8 +40,43 @@ class Users extends CI_Model {
         }
     }
     
+    public function dohvatiCelogUseraSaId($iduser) {
+        $result=$this->db->where('IDUser',$iduser)->get('user');
+        return $result->row();
+    }
+    
     public function getUser() {
         return $this->user;
+    }
+    
+    public function promoteUserToMod($param) {
+        $this->db->set("Tip",1);
+        $this->db->where("Username",$param)->update("user");
+    }
+    
+    public function promoteUserToAdmin($param) {
+        $this->db->set("Tip",2);
+        $this->db->where("Username", $param)->update("user");
+    }
+    
+    public function demoteUserFromAdmin($param) {
+        $this->db->set("Tip",1);
+        $this->db->where("Username", $param)->update("user");
+    }
+    
+    public function demoteUserToMod($param) {
+        $this->db->set("Tip",1);
+        $this->db->where("Username",$param)->update("user");
+    }
+    
+    public function demoteUserFromMod($param) {
+        $this->db->set("Tip",0);
+        $this->db->where("Username", $param)->update("user");
+    }
+    
+    public function deleteUserAccount($param) {
+        $this->db->set("Tip",-1);
+        $this->db->where("Username", $param)->update("user");
     }
     
     public function ispravanPassword($pass){
@@ -121,6 +156,15 @@ class Users extends CI_Model {
     public function searchDB($name) {
         $result = $this->db->like("Name", $name)->get('user');
         return $result;
+    }
+    
+    public function getUserByName($name) {
+        $result=$this->db->where('Name',$name)->get('user');
+        return $result->row();
+    }
+    
+    public function changeRating($who, $rating) {
+        $this->db->where("IDUser", $who)->set("Rating",$rating)->update('user');
     }
     
 }

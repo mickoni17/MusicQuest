@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 28, 2019 at 09:23 PM
--- Server version: 10.1.40-MariaDB
--- PHP Version: 7.3.5
+-- Generation Time: Jun 07, 2019 at 02:03 AM
+-- Server version: 8.0.13
+-- PHP Version: 7.3.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -30,14 +30,25 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `cooperation` (
   `IDCoop` int(11) NOT NULL,
-  `IDUserOrg` int(11) DEFAULT NULL,
-  `IDUserMus` int(11) DEFAULT NULL,
-  `Status` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `IDUserOrg` int(11) NOT NULL,
+  `IDUserMus` int(11) NOT NULL,
+  `Status` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `RatingMusician` float DEFAULT NULL,
   `RatingOrganizer` float DEFAULT NULL,
-  `Description` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `Date` date NOT NULL
+  `Description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `proposalDescription` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
+  `Date` datetime NOT NULL,
+  `IDReply` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `cooperation`
+--
+
+INSERT INTO `cooperation` (`IDCoop`, `IDUserOrg`, `IDUserMus`, `Status`, `RatingMusician`, `RatingOrganizer`, `Description`, `proposalDescription`, `Date`, `IDReply`) VALUES
+(1, 2, 3, 'PENDING', NULL, NULL, NULL, 'asdasdasd', '2019-06-19 14:22:00', 2),
+(2, 2, 1, 'DONE', NULL, 4, 'qweqwrqwfwfwq', 'qweqwrqwrqw', '2019-06-06 22:04:00', 1),
+(3, 2, 1, 'ENDED', NULL, 4, 'qweqwrqwrqwrqwrq', 'asdqwdqw', '2019-06-06 22:10:00', 2);
 
 -- --------------------------------------------------------
 
@@ -47,10 +58,10 @@ CREATE TABLE `cooperation` (
 
 CREATE TABLE `demovideos` (
   `IDUserMus` int(11) NOT NULL,
-  `YoutubeLink1` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `YoutubeLink2` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `YoutubeLink3` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `YoutubeLink4` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL
+  `YoutubeLink1` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `YoutubeLink2` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `YoutubeLink3` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `YoutubeLink4` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -58,7 +69,8 @@ CREATE TABLE `demovideos` (
 --
 
 INSERT INTO `demovideos` (`IDUserMus`, `YoutubeLink1`, `YoutubeLink2`, `YoutubeLink3`, `YoutubeLink4`) VALUES
-(1, NULL, NULL, NULL, NULL);
+(1, NULL, 'https://www.youtube.com/embed/efdrkTsLduw', 'https://www.youtube.com/embed/hFBDbDNLvKU', NULL),
+(3, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -68,10 +80,10 @@ INSERT INTO `demovideos` (`IDUserMus`, `YoutubeLink1`, `YoutubeLink2`, `YoutubeL
 
 CREATE TABLE `locationpictures` (
   `IDUserOrg` int(11) NOT NULL,
-  `pathToPicture1` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pathToPicture2` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pathToPicture3` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pathToPicture4` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL
+  `pathToPicture1` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `pathToPicture2` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `pathToPicture3` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `pathToPicture4` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -79,7 +91,7 @@ CREATE TABLE `locationpictures` (
 --
 
 INSERT INTO `locationpictures` (`IDUserOrg`, `pathToPicture1`, `pathToPicture2`, `pathToPicture3`, `pathToPicture4`) VALUES
-(2, NULL, NULL, NULL, NULL);
+(2, 'images/2/exitExplosiveImg.jpg', 'images/2/kukusImg.jpg', 'images/2/lavanImg.png', 'images/2/readingImg.jpg');
 
 -- --------------------------------------------------------
 
@@ -96,7 +108,8 @@ CREATE TABLE `musician` (
 --
 
 INSERT INTO `musician` (`IDUserMus`) VALUES
-(1);
+(1),
+(3);
 
 -- --------------------------------------------------------
 
@@ -123,16 +136,16 @@ INSERT INTO `organizer` (`IDUserOrg`) VALUES
 
 CREATE TABLE `user` (
   `IDUser` int(11) NOT NULL,
-  `Username` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `Password` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `Name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `Username` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `Password` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `Name` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `Tip` int(11) NOT NULL,
-  `TipUser` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
-  `Active` int(11) DEFAULT NULL,
-  `ProfilePicture` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `TipUser` int(11) NOT NULL,
+  `Active` int(11) NOT NULL,
+  `ProfilePicture` varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
   `TotalRating` int(11) DEFAULT NULL,
-  `TotalVotes` int(11) DEFAULT NULL,
-  `Description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
+  `TotalVotes` int(11) NOT NULL,
+  `Description` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -140,8 +153,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`IDUser`, `Username`, `Password`, `Name`, `Tip`, `TipUser`, `Active`, `ProfilePicture`, `TotalRating`, `TotalVotes`, `Description`) VALUES
-(1, 'dusan', 'mafeacuprija', 'dusancar', 2, 'Musician', 1, NULL, NULL, NULL, NULL),
-(2, 'mickoni17', 'mafeavracar', 'milodar', 2, 'Organizer', 1, NULL, NULL, NULL, NULL);
+(1, 'dusancar11', 'mafeacuprija', 'DusanCar', 2, 0, 0, 'images/1/wembleyImg.jpg', NULL, 0, 'asdfg'),
+(2, 'mickoni17', 'mickoslepac', 'mickoni17', 0, 1, 0, 'images/2/szigetImg.jpg', 0, 0, 'asfdfd'),
+(3, 'MilosPetrovic', 'miloscuprija', 'milosp', 1, 0, 1, NULL, NULL, 0, '');
 
 --
 -- Indexes for dumped tables
@@ -186,42 +200,39 @@ ALTER TABLE `user`
   ADD PRIMARY KEY (`IDUser`);
 
 --
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `cooperation`
---
-ALTER TABLE `cooperation`
-  MODIFY `IDCoop` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `cooperation`
+--
+ALTER TABLE `cooperation`
+  ADD CONSTRAINT `R_10` FOREIGN KEY (`IDUserOrg`) REFERENCES `organizer` (`iduserorg`),
+  ADD CONSTRAINT `R_9` FOREIGN KEY (`IDUserMus`) REFERENCES `musician` (`idusermus`);
 
 --
 -- Constraints for table `demovideos`
 --
 ALTER TABLE `demovideos`
-  ADD CONSTRAINT `demovideos_ibfk_1` FOREIGN KEY (`IDUserMus`) REFERENCES `musician` (`IDUserMus`);
+  ADD CONSTRAINT `R_11` FOREIGN KEY (`IDUserMus`) REFERENCES `musician` (`idusermus`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `locationpictures`
 --
 ALTER TABLE `locationpictures`
-  ADD CONSTRAINT `locationpictures_ibfk_1` FOREIGN KEY (`IDUserOrg`) REFERENCES `organizer` (`IDUserOrg`);
+  ADD CONSTRAINT `R_12` FOREIGN KEY (`IDUserOrg`) REFERENCES `organizer` (`iduserorg`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `musician`
 --
 ALTER TABLE `musician`
-  ADD CONSTRAINT `musician_ibfk_1` FOREIGN KEY (`IDUserMus`) REFERENCES `user` (`IDUser`);
+  ADD CONSTRAINT `R_3` FOREIGN KEY (`IDUserMus`) REFERENCES `user` (`iduser`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `organizer`
 --
 ALTER TABLE `organizer`
-  ADD CONSTRAINT `organizer_ibfk_1` FOREIGN KEY (`IDUserOrg`) REFERENCES `user` (`IDUser`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `R_4` FOREIGN KEY (`IDUserOrg`) REFERENCES `user` (`iduser`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

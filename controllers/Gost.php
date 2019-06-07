@@ -13,6 +13,7 @@
  */
 class Gost extends CI_Controller {
     private $whichOnes=0;
+    private $added=0;
     
     public function __construct() {
         parent::__construct();
@@ -23,14 +24,41 @@ class Gost extends CI_Controller {
         $this->load->model("Users");
     }
     
+    public function remapToMusician($param) {
+        $user = $this->Users->getOne($param);
+        $result = $this->DemoVideos->getUserYoutubeLink($user->IDUser);
+        $message=null;
+        $page = "otherMusicianPage.php";
+        $this->load->view("templates/headerGost.php", ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Gost", "user"=>$user, "resources"=>$result]);
+        $this->load->view($page, ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Gost", "user"=>$user, "resources"=>$result]);
+        $this->load->view("templates/footer.php");
+    }
+    
+    public function remapToOrganizer($param) {
+        $user = $this->Users->getOne($param);
+        $result = $this->LocationPictures->getUserPictures($user->IDUser);
+        $message=null;
+        $page = "otherOrganizerPage.php";
+        $this->load->view("templates/headerGost.php", ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Gost", "user"=>$user, "resources"=>$result]);
+        $this->load->view($page, ["currentPage"=>"musicianPage.css", "message"=>$message, "controller"=>"Gost", "user"=>$user, "resources"=>$result]);
+        $this->load->view("templates/footer.php");
+    }
+    
     public function searchUsers() {
         $name = $_GET['search'];
         $result = $this->Users->searchDB($name);
         $stringToReturn="";
+        $type;
         foreach ($result->result() as $row) {
+            if ($row->TipUser==0) {
+                $type="Musician";
+            }
+            else {
+                $type="Organizer";
+            }
             $stringToReturn.= "<div class=\"col-lg-3 col-md-4 col-sm-6\">
                 <div class=\"card\">
-                    <a href=\"musicianPage.html\"><img src=".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
+                    <a href=\"".base_url()."index.php/Gost/remapTo".$type."/".$row->Username."\"><img src=".base_url()."".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
                     <div class=\"card-body\">
                         <h5 class=\"card-title text-center\">".$row->Name."</h5>
                     </div>
@@ -44,15 +72,24 @@ class Gost extends CI_Controller {
         $this->whichOnes=$_GET['which'];
         $stringToReturn="";
         $result = $this->Users->getAllUsers($this->whichOnes,16);
+        $type;
+        $i=0;
         foreach ($result->result() as $row) {
+            if ($row->TipUser==0) {
+                $type="Musician";
+            }
+            else {
+                $type="Organizer";
+            }
             $stringToReturn.= "<div class=\"col-lg-3 col-md-4 col-sm-6\">
                 <div class=\"card\">
-                    <a href=\"musicianPage.html\"><img src=".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
-                    <div class=\"card-body\">
+                    <a href=\"".base_url()."index.php/Gost/remapTo".$type."/".$row->Username."\"><img src=".base_url()."".$row->ProfilePicture." class=\"card-img-top\" alt=\"Image Not Found\"></a>
+                    <div class=\"card-body\" id=".$i.">
                         <h5 class=\"card-title text-center\">".$row->Name."</h5>
                     </div>
                 </div>
             </div>";
+            $i++;
         }
         echo $stringToReturn;
     }
@@ -60,7 +97,6 @@ class Gost extends CI_Controller {
     public function printPage($page, $cssFile, $message=null) {
         $controller="Gost";
         $result=null;
-        $howMany=16;
         $this->load->view("templates/headerGost.php", ["currentPage"=>$cssFile, "message"=>$message, "controller"=>$controller, "resources"=>$result]);
         $this->load->view($page);
         $this->load->view("templates/footer.php");
@@ -87,7 +123,7 @@ class Gost extends CI_Controller {
         $pass=$this->input->post("Password");
         $radioVal = $_POST["optradio"];
         $confirmed=$this->input->post("Confirmed");
-        $tip=2;
+        $tip=0;
         $active=1;
         $tipUser;
         if($radioVal == "musician" && $pass==$confirmed) {
